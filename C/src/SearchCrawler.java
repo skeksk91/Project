@@ -844,7 +844,7 @@ public class SearchCrawler extends JFrame {
 			// Download the page at the given url. //downloadpage를 호출,수행하여 리턴값을 pageContent에 넣음
 			String pageContents = downloadPage(verifiedUrl); //페이지를 전부 읽어 들여 저장
 			File save_txt = new File("C:/Users/Administrator/Desktop/test.txt"); // 저장 될 파일명
-            PrintWriter pw = new PrintWriter(new FileWriter(save_txt2,true));
+            PrintWriter pw = new PrintWriter(new FileWriter(save_txt,true));
             pw.println(pageContents); 
 			/*
 			 * If the page was downloaded successfully, retrieve all of its
@@ -858,7 +858,7 @@ public class SearchCrawler extends JFrame {
 				// Add links to the to crawl list.
 				toCrawlList.addAll(links); //수집한 모든 link를 toCrawlList에 담는다. 
 
-				pw.println("from " + verifiedUrl);
+				pw2.println("from " + verifiedUrl);
 				for(String i: links){
 					pw2.println("   to " + i);
 				}

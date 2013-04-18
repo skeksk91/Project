@@ -642,7 +642,7 @@ public class SearchCrawler extends JFrame {
 		try {
 			// Open connection to URL for reading.
 			BufferedReader reader = new BufferedReader(new InputStreamReader(
-					pageUrl.openStream(),"EUC-KR"));  //EUC-KR
+					pageUrl.openStream(),"EUC-KR"));  //EUC-KR, UTF-8
 			
 			// Read page into buffer.
 			String line = null;  //Each Line in HTML 
@@ -876,7 +876,7 @@ public class SearchCrawler extends JFrame {
 			updateStats(url, crawledList.size(), toCrawlList.size(), maxUrls);
 		}
 	}
-
+	
 	// Run the Search Crawler.
 	public static void main(String[] args) {
 		SearchCrawler crawler = new SearchCrawler();

@@ -666,11 +666,10 @@ public class SearchCrawler extends JFrame {
 				if(line.indexOf("<ul class=\"search-list\">") != -1){
 					ArrayList<String> list = searchResults(reader);
 					for(String str : list){
-						System.out.println(str);
+						pageBuffer.append(str + "\n");
 					}
 					break;
 				}
-				pageBuffer.append(line + "\n");
 			}
 			return pageBuffer.toString();
 		} catch (Exception e) {
@@ -687,6 +686,7 @@ public class SearchCrawler extends JFrame {
 		}
 		return searchList;
 	}
+	
 	// Remove leading "www" from a URL's host if present.
 	// removeWwwFromUrl()을 호출하여 입력한　url에서 www까지 삭제
 	private String removeWwwFromUrl(String url) {
@@ -696,17 +696,19 @@ public class SearchCrawler extends JFrame {
 		} //(예) http://www.daum.net=> http://daum.net
 		return (url);
 	}
-
+	
 	// Parse through page contents and retrieve links.
 	private ArrayList<String> retrieveLinks(URL pageUrl, String pageContents,
 			HashSet crawledList, boolean limitHost) {
 		// Compile link matching pattern.
+		
 		Pattern p = Pattern.compile("<a\\s+href\\s*=\\s*\"?(.*?)[\"|>]", //<a href=""> 이런 것을 걸러냄
 				Pattern.CASE_INSENSITIVE); //String이 컴파일될때 패턴을 지정 -> JAVA의 정규표현식 
 		Matcher m = p.matcher(pageContents); //정규표현식에 맞는지 매칭시켜본다. 
 
 		// Create list of link matches.
 		ArrayList<String> linkList = new ArrayList<String>();
+		
 		while (m.find()) { //매치가 되면 계속 돌아간다. 
 			String link = m.group(1).trim(); // s.substring(m.start(1), m.end(1))와 같은 표현 
 											 // 매칭된 것  중 첫번째에서 link만  잘라내어 저장 
@@ -778,12 +780,9 @@ public class SearchCrawler extends JFrame {
 			if (crawledList.contains(link)) { //이미 crawledList에서 수집된 정보라면 넘어간다. 
 				continue;
 			}
-
-			// Add link to list.
-			linkList.add(link); //모두 아니라면 linkList에 저장 
+			linkList.add(link);
 		}
-
-		return (linkList);
+		return linkList;
 	}
 
 	/*

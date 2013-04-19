@@ -193,7 +193,7 @@ public class SearchCrawler extends JFrame {
 		searchButton.addActionListener(new ActionListener() {
 			public
 			void actionPerformed(ActionEvent e) {
-				actionSearch();
+					actionSearch();
 			}
 		});
 		constraints = new GridBagConstraints();
@@ -360,14 +360,26 @@ public class SearchCrawler extends JFrame {
 		// Validate that start URL has been entered. => startURL에 사용자가 적은 내용을
 		// 담는다.
 		String startUrl = startTextField.getText().trim();
+
+		try {
+			startUrl = URLEncoder.encode(startUrl, "EUC-KR");
+		} catch (UnsupportedEncodingException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		//Nate News Search Format
+		startUrl = "http://search.nate.com/search/all.html?ssn=036&dsn=3&asn=003600540&thr=vnnw&nq=&q=" + startUrl + "&e=1";
+		
 		// startURL의 유효성 검사
 		if (startUrl.length() < 1) {
 			errorList.add("Missing Start URL.");
 		}
 		// Verify start URL.
+/*------
 		else if (verifyUrl(startUrl) == null) {
 			errorList.add("Invalid Start URL.");
-		}
+		}*/
 
 		// Validate that max URLs is either empty or is a number.
 		// => 사용자가 Max URLs to Crawl에 적은 내용을 담는다.
@@ -639,19 +651,27 @@ public class SearchCrawler extends JFrame {
 
 	// Download page at given URL. //검사를 통과한 url을 다운로드 한다. 
 	private String downloadPage(URL pageUrl) {
+
 		try {
 			// Open connection to URL for reading.
-			BufferedReader reader = new BufferedReader(new InputStreamReader(
-					pageUrl.openStream(),"EUC-KR"));  //EUC-KR, UTF-8
+			InputStream stream = pageUrl.openStream();
 			
+			BufferedReader reader = new BufferedReader(new InputStreamReader(
+					stream,"EUC-KR"));  //EUC-KR, UTF-8
 			// Read page into buffer.
 			String line = null;  //Each Line in HTML 
 			StringBuffer pageBuffer = new StringBuffer();
 			
 			while ((line = reader.readLine()) != null) {
-				pageBuffer.append(line);
+				if(line.indexOf("<ul class=\"search-list\">") != -1){
+					ArrayList<String> list = searchResults(reader);
+					for(String str : list){
+						System.out.println(str);
+					}
+					break;
+				}
+				pageBuffer.append(line + "\n");
 			}
-
 			return pageBuffer.toString();
 		} catch (Exception e) {
 		}
@@ -659,6 +679,14 @@ public class SearchCrawler extends JFrame {
 		return null;
 	}
 
+	public ArrayList<String> searchResults(BufferedReader reader) throws IOException{
+		ArrayList<String> searchList = new ArrayList<String>();
+		String line = null;
+		while((line = reader.readLine()).indexOf("</ul>") == -1){
+			searchList.add(line);
+		}
+		return searchList;
+	}
 	// Remove leading "www" from a URL's host if present.
 	// removeWwwFromUrl()을 호출하여 입력한　url에서 www까지 삭제
 	private String removeWwwFromUrl(String url) {

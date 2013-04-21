@@ -877,26 +877,28 @@ public class SearchCrawler extends JFrame {
 			 * If the page was downloaded successfully, retrieve all of its
 			 * links and then see if it contains the search string.
 			 */
+//----------------- //일단 pageContents에 가공되지 않은 뉴스 리스트들이 들어있음
 			if (pageContents != null && pageContents.length() > 0) { //페이지의 내용이 있을 경우 
 				// Retrieve list of valid links from page.
-				ArrayList<String> links = retrieveLinks(verifiedUrl, pageContents,
-						crawledList, limitHost); 
+				//ArrayList<String> links = retrieveLinks(verifiedUrl, pageContents,
+				//		crawledList, limitHost); 
 
 				// Add links to the to crawl list.
-				toCrawlList.addAll(links); //수집한 모든 link를 toCrawlList에 담는다. 
-
+				//toCrawlList.addAll(links); //수집한 모든 link를 toCrawlList에 담는다. 
+				/*
 				pw2.println("from " + verifiedUrl);
 				for(String i: links){
 					pw2.println("   to " + i);
-				}
+				}*/
 				/*
 				 * Check if search string is present in page and if so record a
 				 * match.
 				 */
+				/*
 				if (searchStringMatches(pageContents, searchString,
 						caseSensitive)) { 
 					addMatch(url); //페이지 내용에 찾을 단어 가 있다면 url을 테이블에서 출력한다. 
-				}
+				}*/
 			}
 
 			// Update crawling stats. //숨겨진 라벨과 프로그레스바를 업데이트한다. 

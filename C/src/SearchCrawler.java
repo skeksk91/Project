@@ -830,8 +830,6 @@ public class SearchCrawler extends JFrame {
 		// Add start URL to the to crawl list.
 		toCrawlList.add(startUrl); //수집하기 위한 리스트에 사용자가 출발점으로 지정한 사이트를 기록
 
-		File save_txt2 = new File("C:/Users/Administrator/Desktop/link.txt"); // 저장 될 파일명
-        PrintWriter pw2 = new PrintWriter(new FileWriter(save_txt2,true));
 		/*
 		 * Perform actual crawling by looping through the to crawl list.
 		 */

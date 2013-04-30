@@ -14,12 +14,12 @@ import javax.swing.*;
 import javax.swing.table.*;
 
 // The Search Web Crawler
-public class CopyOfSearchCrawler extends JFrame {
+public class SearchCrawler extends JFrame {
 	// Cache of robot disallow lists.
 	private HashMap disallowListCache = new HashMap(); 
 	// robot의 침투를 허용하지 않은 site의 리스트
 
-	public CopyOfSearchCrawler() {
+	public SearchCrawler() {
 	} 
 
 	// Handle search/stop button being clicked. Search 또는 Stop 버튼이 클릭되면 여기가 호출
@@ -176,6 +176,24 @@ public class CopyOfSearchCrawler extends JFrame {
 		return searchList;
 	}
 	
+	public String extractStrings(String resultPage){
+		StringBuffer extracted = new StringBuffer();
+		Pattern p = Pattern.compile("<a\\s+href\\s*=\\s*\"http://news.nate.com/view/?(.*?)[\"|>]", //<a href="http://news.nate.com/view/******" 별표를 걸러냄
+				Pattern.CASE_INSENSITIVE); 
+		Matcher m = p.matcher(resultPage);
+		
+		String prev = "";
+		int i = 1;
+		while (m.find()) { //매치가 되면 계속 돌아간다. 
+			String link = m.group(1).trim(); 
+			if(!link.equals(prev))
+				extracted.append(link + '\n');
+			prev = link;
+			i++;
+		}
+		return extracted.toString();
+	}
+	
 	// Perform the actual crawling, searching for the search string.
 	public void crawl(String startUrl, boolean caseSensitive) throws IOException{
 		// Setup crawl lists. -> 수집 정보를 기록하기 위한 HashSet 설정 
@@ -192,7 +210,7 @@ public class CopyOfSearchCrawler extends JFrame {
 				System.out.println("Robot에 걸림");
 			}
 			String pageContents = downloadPage(verifiedUrl); //페이지를 전부 읽어 들여 저장
-			
+			System.out.println(extractStrings(pageContents));		
 			// Download the page at the given url. //downloadpage를 호출,수행하여 리턴값을 pageContent에 넣음
 			File save_txt = new File("C:/Users/Administrator/Desktop/test.out"); // 저장 될 파일명
             PrintWriter pw = new PrintWriter(new FileWriter(save_txt,true));
@@ -203,7 +221,7 @@ public class CopyOfSearchCrawler extends JFrame {
 	
 	// Run the Search Crawler.
 	public static void main(String[] args) {
-		CopyOfSearchCrawler crawler = new CopyOfSearchCrawler();
+		SearchCrawler crawler = new SearchCrawler();
 		crawler.go();
 	}
 }

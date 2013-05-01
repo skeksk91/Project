@@ -18,16 +18,14 @@ public class SearchCrawler extends JFrame {
 	// Cache of robot disallow lists.
 	private HashMap disallowListCache = new HashMap(); 
 	// robot의 침투를 허용하지 않은 site의 리스트
-
+	public String startUrl = "군대";  // 카테고리 단어 
+	
 	public SearchCrawler() {
 	} 
 
 	// Handle search/stop button being clicked. Search 또는 Stop 버튼이 클릭되면 여기가 호출
 	// 된다.
-	private void go() {
-
-		String startUrl = "군대";   // 카테고리 단어 
-
+	private void go() { 
 		try {
 			startUrl = URLEncoder.encode(startUrl, "EUC-KR"); // 군대를 EUC-KR형식으로 변환 
 		} catch (UnsupportedEncodingException e1) {
@@ -35,10 +33,12 @@ public class SearchCrawler extends JFrame {
 		}
 		
 		//Nate News Search Format
-		startUrl = "http://search.nate.com/search/all.html?ssn=036&dsn=3&asn=003600540&thr=vnnw&nq=&q=" + startUrl + "&e=1";
+		startUrl = "http://search.nate.com/search/all.html?ssn=036&dsn=3&asn=003600540&thr=vnnw&nq=&q=" + startUrl + "&e=";
 
 		// Start the search crawler.
-		search(startUrl); //search() 호출
+		for(int pageNum = 1; pageNum <= 91; pageNum += 10){  // 10페이지까지 수집
+			search(startUrl + pageNum); //search() 호출
+		}
 	}
 
 	private void search(final String startUrl) {
@@ -178,19 +178,32 @@ public class SearchCrawler extends JFrame {
 	
 	public String extractStrings(String resultPage){
 		StringBuffer extracted = new StringBuffer();
+		
 		Pattern p = Pattern.compile("<a\\s+href\\s*=\\s*\"http://news.nate.com/view/?(.*?)[\"|>]", //<a href="http://news.nate.com/view/******" 별표를 걸러냄
 				Pattern.CASE_INSENSITIVE); 
 		Matcher m = p.matcher(resultPage);
 		
+		resultPage = resultPage.replace("003600540&amp;sa=&amp;c=1','','');\"><img src","");
+		
+		Pattern p2 = Pattern.compile("003600540&amp;sa=&amp;c=1','',''\\);\">?(.*?)</a></dt>");
+		Matcher m2 = p2.matcher(resultPage);
+		
 		String prev = "";
-		int i = 1;
 		while (m.find()) { //매치가 되면 계속 돌아간다. 
 			String link = m.group(1).trim(); 
-			if(!link.equals(prev))
+			
+			if(!link.equals(prev)){
 				extracted.append(link + '\n');
+			}
 			prev = link;
-			i++;
 		}
+		while(m2.find()){
+			String link2 = m2.group(1).trim();
+			link2 = link2.replace("<b>", "");
+			link2 = link2.replace("</b>", "");
+			extracted.append(link2 + '\n');
+		}
+		
 		return extracted.toString();
 	}
 	
